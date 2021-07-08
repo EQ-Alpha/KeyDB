@@ -4635,10 +4635,6 @@ int prepareForShutdown(int flags) {
        overwrite the synchronous saving did by SHUTDOWN. */
     if (g_pserver->child_type == CHILD_TYPE_RDB) {
         serverLog(LL_WARNING,"There is a child saving an .rdb. Killing it!");
-        /* Note that, in killRDBChild, we call rdbRemoveTempFile that will
-         * do close fd(in order to unlink file actully) in background thread.
-         * The temp rdb file fd may won't be closed when redis exits quickly,
-         * but OS will close this fd when process exits. */
         killRDBChild();
         /* Note that, in killRDBChild normally has backgroundSaveDoneHandler
          * doing it's cleanup, but in this case this code will not be reached,
@@ -6834,7 +6830,7 @@ int main(int argc, char **argv) {
                 serverLog(LL_WARNING, "Failed to test the kernel for a bug that could lead to data corruption during background save. "
                                       "Your system could be affected, please report this error.");
             if (!checkIgnoreWarning("ARM64-COW-BUG")) {
-                serverLog(LL_WARNING,"Redis will now exit to prevent data corruption. "
+                serverLog(LL_WARNING,"KeyDB will now exit to prevent data corruption. "
                                      "Note that it is possible to suppress this warning by setting the following config: ignore-warnings ARM64-COW-BUG");
                 exit(1);
             }
